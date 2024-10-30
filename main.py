@@ -34,5 +34,19 @@ for i in range(len(chosen_cards)):
         if first_suit == second_suit:
             same_suit = (chosen_cards[i], chosen_cards[j])
 
+print("Same suit:")
+
 for i in same_suit:
+    i.show_card()
+
+removed_card = same_suit[0]
+
+remaining_cards = [same_suit[1]]
+
+for i in chosen_cards:
+    if i not in same_suit:
+        remaining_cards.append(i)
+
+print("Remaning cards:")
+for i in remaining_cards:
     i.show_card()
