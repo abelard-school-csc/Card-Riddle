@@ -1,4 +1,5 @@
 import random
+import itertools
 
 suits = ["c", "d", "h", "s"]
 values = [1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13]
@@ -7,46 +8,58 @@ class Card:
     def __init__(self, suit, val):
         self.value = val
         self.suit = suit
-    def show_card(self):
-        print(self.suit, self.value)
+    def show(self):
+        return (self.suit, self.value)
 
-deck = []
+def make_deck():
+    deck = []
 
-for suit in suits:
-    for value in values:
-        new_card = Card(suit, value)
-        deck.append(new_card)
+    for suit in suits:
+        for value in values:
+            new_card = Card(suit, value)
+            deck.append(new_card)
 
-chosen_cards = []
+    return deck
 
-for card in range(5):
-    card = random.choice(deck)
-    deck.remove(card)
-    chosen_cards.append(card)
+def choose_five():
+    deck = make_deck()
+    chosen_cards = []
 
-for i in range(len(chosen_cards)):
-    for j in range(i + 1, len(chosen_cards)):
-        # print(f"First card: {chosen_cards[i].suit}, {chosen_cards[i].value}, Second Card: {chosen_cards[j].suit}, {chosen_cards[j].value}")
+    for card in range(5):
+        card = random.choice(deck)
+        deck.remove(card)
+        chosen_cards.append(card)
 
-        first_suit = chosen_cards[i].suit
-        second_suit = chosen_cards[j].suit
+    return chosen_cards
 
-        if first_suit == second_suit:
-            same_suit = (chosen_cards[i], chosen_cards[j])
+def permutate(array):
+    return [list(permutation) for permutation in itertools.permutations(array)]
 
-print("Same suit:")
+def sort_variations(all_permutation):
+    return sorted(all_permutation)[::-1]
 
-for i in same_suit:
-    i.show_card()
+def validate(five):
+    first = five[0].value
+    last = five[-1].value
+    middle = [card.value for card in five[1:4]]
+    sorted_middle = sort_variations(middle)
 
-removed_card = same_suit[0]
+    for i in range(len(sorted_middle)):
+        if middle == sorted_middle:
+            increment = i + 1
+            if ((first + increment) % 12 == last) and (five[0].suit == five[-1].suit):
+                return True
+    return False
 
-remaining_cards = [same_suit[1]]
+def main():
+    five_cards = choose_five()
+    permutations =  permutate(five_cards)
+    for variation in permutations:
+        if validate(variation):
+            print(f"Deck: {[i.show() for i in variation]}")
+            print(f"Ordered four cards (top to bottom){[i.show() for i in variation[:4]]}")
+            print(f"Hidden card: {variation[-1].show()}")
+            break
 
-for i in chosen_cards:
-    if i not in same_suit:
-        remaining_cards.append(i)
-
-print("Remaning cards:")
-for i in remaining_cards:
-    i.show_card()
+if __name__ == "__main__":
+    main()
